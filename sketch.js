@@ -1,4 +1,4 @@
-var person, timer = 0, song, dtimer = 0, gameOver = paused = false;
+var person, timer = 0, song, dtimer = 0, enemyTimer = 0, gameOver = paused = false;
 var difficulty = 1;
 var boxes = [], enemies = [];
 var bgColor = 0, sb = 0;
@@ -34,14 +34,19 @@ function draw() {
     var gravity = createVector(0, 0.2)
     person.applyForce(gravity);
     if(boxes.length > 5 + difficulty/128)
-          boxes.shift();
+      boxes.shift();
+    if(enemies.length > 5 + difficulty/128)
+      enemies.shift();
+    if(millis() >= 2000 + enemyTimer){
+      createEnemy();
+      enemyTimer = millis();
+    }      
     if (person.vel.x != 0 && millis() >= (1000/difficulty)+timer) {
       createBoxes();
-      createEnemy();
       timer = millis();
       if(difficulty < 4096 && millis() >= 10000 + dtimer){
-          difficulty*=2;
-          dtimer = millis();
+        difficulty*=1.5;
+        dtimer = millis();
       }
     }
     translate(-person.pos.x - person.vel.x + 50,0);
@@ -58,18 +63,20 @@ function draw() {
     text("Max Speed: " + (maxSpeed * 5) + " mph", person.pos.x + 350, 110);
     for(let i in boxes){
       boxes[i].display();
-      if((person.pos.x > boxes[i].pos.x && person.pos.x < boxes[i].pos.x + boxes[i].width) && (person.pos.y > boxes[i].pos.y && person.pos.y < boxes[i].pos.y + boxes[i].height)
-        || (person.pos.x + person.width > boxes[i].pos.x && person.pos.x + person.width < boxes[i].pos.x + boxes[i].width) && (person.pos.y - person.height > boxes[i].pos.y && person.pos.y + person.height < boxes[i].pos.y + boxes[i].height)
-        || (person.pos.x + person.width > boxes[i].pos.x && person.pos.x + person.width < boxes[i].pos.x + boxes[i].width) && (person.pos.y - (person.height/2) > boxes[i].pos.y && person.pos.y + (person.height/2) < boxes[i].pos.y + boxes[i].height)){
+      if((person.pos.x >= boxes[i].pos.x && person.pos.x <= boxes[i].pos.x + boxes[i].width) && (person.pos.y >= boxes[i].pos.y && person.pos.y <= boxes[i].pos.y + boxes[i].height)
+        || (person.pos.x + person.width >= boxes[i].pos.x && person.pos.x + person.width <= boxes[i].pos.x + boxes[i].width) && (person.pos.y - person.height >= boxes[i].pos.y && person.pos.y + person.height <= boxes[i].pos.y + boxes[i].height)
+        || (person.pos.x + person.width >= boxes[i].pos.x && person.pos.x + person.width <= boxes[i].pos.x + boxes[i].width) && (person.pos.y - (person.height/2) >= boxes[i].pos.y && person.pos.y + (person.height/2) <= boxes[i].pos.y + boxes[i].height))
         person.vel.x = 0;
-        gameOver = true;
-      }
     }
     for(let j in enemies){
       enemies[j].update();
       enemies[j].applyForce(gravity);
       enemies[j].edges();
       enemies[j].display();
+      if((person.pos.x >= enemies[j].pos.x && person.pos.x <= enemies[j].pos.x + enemies[j].width) && (person.pos.y >= enemies[j].pos.y && person.pos.y <= enemies[j].pos.y + enemies[j].height)
+        || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - person.height >= enemies[j].pos.y && person.pos.y + person.height <= enemies[j].pos.y + enemies[j].height)
+        || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - (person.height/2) >= enemies[j].pos.y && person.pos.y + (person.height/2) <= enemies[j].pos.y + enemies[j].height))
+        gameOver = true;
     }
     let startB = new Box(400,height-50);
     startB.display();
@@ -96,25 +103,27 @@ function draw() {
 
 function keyPressed() {
     if(!gameOver){
-      if(!song.isPlaying())
+      if(!paused){
+        if(!song.isPlaying())
           song.loop();
-      if (keyCode === LEFT_ARROW || key === 'a' || key === 'A')
-        person.applyForce(createVector(-1,0))
-      else if (keyCode === RIGHT_ARROW || key === 'd' || key === 'D')
-        person.applyForce(createVector(1,0))
-      else if (!upBound() && (keyCode === UP_ARROW || key === 'w' || key === 'W' || key === ' ')){
-        person.applyForce(createVector(0,-5))
-        for( i in enemies){
-          let motion = createVector(0, -1 * random(5))
-          enemies[i].applyForce(motion);
+        if (keyCode === LEFT_ARROW || key === 'a' || key === 'A')
+          person.applyForce(createVector(-1,0))
+        else if (keyCode === RIGHT_ARROW || key === 'd' || key === 'D')
+          person.applyForce(createVector(1,0))
+        else if (!upBound() && (keyCode === UP_ARROW || key === 'w' || key === 'W' || key === ' ')){
+          person.applyForce(createVector(0,-5))
+          for(i in enemies){
+            let motion = createVector(0, -1 * random(4))
+            enemies[i].applyForce(motion);
+          }
         }
+        else if (!downBound() && (keyCode === DOWN_ARROW || key === 's' || key === 'S'))
+          person.applyForce(createVector(0,5))
       }
-      else if (!downBound() && (keyCode === DOWN_ARROW || key === 's' || key === 'S'))
-        person.applyForce(createVector(0,5))
-      else if(key === 'p' || key === 'P')
+      if(key === 'p' || key === 'P')
         paused = !paused;
     }
-    else{
+    else if(gameOver){
       gameOver = false;
     }
     
