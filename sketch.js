@@ -1,4 +1,4 @@
-var person, timer = 0, song, dtimer = 0, enemyTimer = 0, gameOver = paused = false;
+var person, timer = 0, song, dtimer = 0, enemyTimer = 0, gameOver = paused = restart = false;
 var difficulty = 1;
 var boxes = [], enemies = [];
 var bgColor = 0, sb = 0;
@@ -27,12 +27,13 @@ function setup() {
   info.child(createElement('p', 'Use w/a/s/d or left/right/up/down to move'));
   info.child(createElement('p', 'You can use the space bar to jump too'));
   info.child(createElement('p', 'Press P to pause the game'));
+  info.child(createElement('p', 'Press R to restart the game'));
 }
 // function play(){
 //   song.loop();
 // }
 function draw() {
-  if(!(gameOver || paused)){
+  if(!(gameOver || paused || restart)){
     if(song.currentTime() >= 7){
       bgColor += 0.5;
       sb = 220;
@@ -96,11 +97,14 @@ function draw() {
     fill(255,0,255);
     text("Paused", width/2-75, height/2);
   }
-  else if(gameOver){
+  else if(gameOver || restart){
     //reset game
     textSize(40);
     fill(255,0,255);
-    text("Game Over", width/2-75, height/2);
+    if(gameOver)
+      text("Game Over", width/2-75, height/2);
+    else
+      person.pos.y = height;
     difficulty = 1;
     song.stop();
     boxes = [];
@@ -109,10 +113,13 @@ function draw() {
     sb = 0;
     person.pos.x = 0;
     person.vel = createVector(0,0);
+    restart = false;
   }
 }
 
 function keyPressed() {
+    if(key === 'r' || key === 'R')
+      restart = true;
     if(!gameOver){
       if(!paused){
         if(!song.isPlaying())
