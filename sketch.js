@@ -8,6 +8,7 @@ function preload() {
   song = loadSound('assets/screm.mp3');
 }
 function setup() {
+  createElement('h1', 'Sidescroller');
   createCanvas(windowWidth * 0.6, windowHeight * 0.4);
 //   song.loop();
   colorMode(HSB,255);
@@ -18,10 +19,14 @@ function setup() {
   // reverbTime of 6 seconds, decayRate of 0.2%
   reverb.process(song, 6, 0.2);
   // Instructions
-  createElement('h1', 'Controls');
-  createElement('p', 'Use w/a/s/d or left/right/up/down to move');
-  createElement('p', 'You can use the space bar to jump too');
-  createElement('p', 'Press P to pause the game');
+  let info = createDiv();
+  info.id("desc");
+  info.child(createElement('h2', 'Description'));
+  info.child(createElement('p', "Try to get as far as you can without touching the zombies. Don't hit the boxes, they'll stop you in your tracks."));
+  info.child(createElement('h2', 'Controls'));
+  info.child(createElement('p', 'Use w/a/s/d or left/right/up/down to move'));
+  info.child(createElement('p', 'You can use the space bar to jump too'));
+  info.child(createElement('p', 'Press P to pause the game'));
 }
 // function play(){
 //   song.loop();

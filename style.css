@@ -1,8 +1,51 @@
 html, body {
-    margin: 1vw;
-    font-size: large;
-  }
-  canvas {
-    display: block;
-  }
-  
+  margin: 0;
+  font-family: sans-serif;
+  font-size: large;
+  overflow-x: hidden;
+}
+canvas {
+  z-index: 1;
+  margin: 1vw;
+  display: block;
+  border: 2px solid black;
+}
+p,h1,h2,h3 {
+  margin: 1vw;
+}
+h1 {
+  color: rgb(72,133,237);
+}
+#header {
+  padding: 1vh;
+  background: rgb(72,133,237);
+  background: linear-gradient(90deg, rgba(72,133,237,1) 0%, rgba(219,50,54,1) 37%, rgba(244,194,13,1) 69%, rgba(60,186,84,1) 100%);
+  color: white;
+  font-size: 42px;
+  font-weight: bold;
+  width: 100%;
+  height: 1.25em;
+}
+#desc {
+  margin: 1vw;
+  border: 2px solid black;
+  display: inline-block;
+  background-color: rgb(225, 225, 225);
+}
+#nav {
+  display: inline-grid;
+  position: fixed;
+  right: 1vw;
+  padding: 0.25em 0;
+  margin: 0 1em;
+}
+.navIcons a img {
+  height: 1em;
+  width: auto;
+  padding: 0 0.5vw;
+  filter: invert(1);
+}
+.navIcons a:hover img {
+    /* placeholder until svg paths are inlined. then, use fill */
+    filter: invert(75%) sepia(0%) saturate(476%) hue-rotate(67deg) brightness(118%) contrast(119%);
+}
