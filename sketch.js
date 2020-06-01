@@ -82,8 +82,8 @@ function draw() {
         enemies[j].edges();
         enemies[j].display();
         if((person.pos.x >= enemies[j].pos.x && person.pos.x <= enemies[j].pos.x + enemies[j].width) && (person.pos.y >= enemies[j].pos.y && person.pos.y <= enemies[j].pos.y + enemies[j].height)
-          || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - person.height >= enemies[j].pos.y && person.pos.y + person.height <= enemies[j].pos.y + enemies[j].height)
-          || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - (person.height/2) >= enemies[j].pos.y && person.pos.y + (person.height/2) <= enemies[j].pos.y + enemies[j].height))
+          || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y + person.height >= enemies[j].pos.y && person.pos.y + person.height <= enemies[j].pos.y + enemies[j].height)
+          || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y + (person.height/2) >= enemies[j].pos.y && person.pos.y + (person.height/2) <= enemies[j].pos.y + enemies[j].height))
           gameOver = true;
       }
     }
