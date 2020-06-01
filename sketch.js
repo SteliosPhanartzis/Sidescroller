@@ -8,7 +8,7 @@ function preload() {
   song = loadSound('assets/screm.mp3');
 }
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(windowWidth * 0.6, windowHeight * 0.4);
 //   song.loop();
   colorMode(HSB,255);
   person = new Person();
@@ -17,6 +17,11 @@ function setup() {
   // sonnects soundFile to reverb with a
   // reverbTime of 6 seconds, decayRate of 0.2%
   reverb.process(song, 6, 0.2);
+  // Instructions
+  createElement('h1', 'Controls');
+  createElement('p', 'Use w/a/s/d or left/right/up/down to move');
+  createElement('p', 'You can use the space bar to jump too');
+  createElement('p', 'Press P to pause the game');
 }
 // function play(){
 //   song.loop();
@@ -37,7 +42,7 @@ function draw() {
       boxes.shift();
     if(enemies.length > 5 + difficulty/128)
       enemies.shift();
-    if(millis() >= 2000 + enemyTimer){
+    if(person.vel.x != 0 && millis() >= 2000 + enemyTimer){
       createEnemy();
       enemyTimer = millis();
     }      
@@ -53,14 +58,11 @@ function draw() {
     person.update();
     person.edges();
     person.display();
-    fill(255,0,255)
-    textSize(20);
-    text("Use w/a/s/d or left/right/up/down to move", 20, 50);
-    text("You can use the space bar to jump too", 20, 100);
     textSize(16);
-    text("Difficulty Multiplier: " + difficulty, person.pos.x + 350, 50);
-    text("Speed: " + (person.vel.x * 5) + " mph", person.pos.x + 350, 80);
-    text("Max Speed: " + (maxSpeed * 5) + " mph", person.pos.x + 350, 110);
+    text("Difficulty Multiplier: " + difficulty, person.pos.x, 50);
+    text("Speed: " + (person.vel.x * 5) + " mph", person.pos.x, 80);
+    text("Max Speed: " + (maxSpeed * 5) + " mph", person.pos.x, 110);
+    text("Distance Traveled: " + (person.pos.x/1000) + " miles", person.pos.x, 140);
     for(let i in boxes){
       boxes[i].display();
       if((person.pos.x >= boxes[i].pos.x && person.pos.x <= boxes[i].pos.x + boxes[i].width) && (person.pos.y >= boxes[i].pos.y && person.pos.y <= boxes[i].pos.y + boxes[i].height)
@@ -68,15 +70,17 @@ function draw() {
         || (person.pos.x + person.width >= boxes[i].pos.x && person.pos.x + person.width <= boxes[i].pos.x + boxes[i].width) && (person.pos.y - (person.height/2) >= boxes[i].pos.y && person.pos.y + (person.height/2) <= boxes[i].pos.y + boxes[i].height))
         person.vel.x = 0;
     }
-    for(let j in enemies){
-      enemies[j].update();
-      enemies[j].applyForce(gravity);
-      enemies[j].edges();
-      enemies[j].display();
-      if((person.pos.x >= enemies[j].pos.x && person.pos.x <= enemies[j].pos.x + enemies[j].width) && (person.pos.y >= enemies[j].pos.y && person.pos.y <= enemies[j].pos.y + enemies[j].height)
-        || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - person.height >= enemies[j].pos.y && person.pos.y + person.height <= enemies[j].pos.y + enemies[j].height)
-        || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - (person.height/2) >= enemies[j].pos.y && person.pos.y + (person.height/2) <= enemies[j].pos.y + enemies[j].height))
-        gameOver = true;
+    if(enemies){
+      for(let j in enemies){
+        enemies[j].update();
+        enemies[j].applyForce(gravity);
+        enemies[j].edges();
+        enemies[j].display();
+        if((person.pos.x >= enemies[j].pos.x && person.pos.x <= enemies[j].pos.x + enemies[j].width) && (person.pos.y >= enemies[j].pos.y && person.pos.y <= enemies[j].pos.y + enemies[j].height)
+          || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - person.height >= enemies[j].pos.y && person.pos.y + person.height <= enemies[j].pos.y + enemies[j].height)
+          || (person.pos.x + person.width >= enemies[j].pos.x && person.pos.x + person.width <= enemies[j].pos.x + enemies[j].width) && (person.pos.y - (person.height/2) >= enemies[j].pos.y && person.pos.y + (person.height/2) <= enemies[j].pos.y + enemies[j].height))
+          gameOver = true;
+      }
     }
     let startB = new Box(400,height-50);
     startB.display();
@@ -95,9 +99,11 @@ function draw() {
     difficulty = 1;
     song.stop();
     boxes = [];
+    enemies = [];
     bgColor = 0;
     sb = 0;
     person.pos.x = 0;
+    person.vel = createVector(0,0);
   }
 }
 
@@ -107,13 +113,13 @@ function keyPressed() {
         if(!song.isPlaying())
           song.loop();
         if (keyCode === LEFT_ARROW || key === 'a' || key === 'A')
-          person.applyForce(createVector(-1,0))
+          person.applyForce(createVector(-1,0));
         else if (keyCode === RIGHT_ARROW || key === 'd' || key === 'D')
-          person.applyForce(createVector(1,0))
+          person.applyForce(createVector(1,0));
         else if (!upBound() && (keyCode === UP_ARROW || key === 'w' || key === 'W' || key === ' ')){
-          person.applyForce(createVector(0,-5))
+          person.applyForce(createVector(0,-5));
           for(i in enemies){
-            let motion = createVector(0, -1 * random(4))
+            let motion = createVector(0, -1 * random(4));
             enemies[i].applyForce(motion);
           }
         }
@@ -145,9 +151,9 @@ function downBound(){
 function createBoxes(){
     let rec;
     if(song.currentTime() >= 30)
-        rec = new Box(person.pos.x + random(800), height + 25 - random(height), 25 + random(100), 25 + random(100));
+        rec = new Box(person.pos.x + random(1500) + 150, height + 25 - random(height), 25 + random(100), 25 + random(100));
     else
-        rec = new Box(person.pos.x + random(800), height + 25 - random(height));
+        rec = new Box(person.pos.x + random(1500) + 150, height + 25 - random(height));
     boxes.push(rec)
   }
 function createEnemy(){
