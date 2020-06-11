@@ -49,3 +49,6 @@ h1 {
     /* placeholder until svg paths are inlined. then, use fill */
     filter: invert(75%) sepia(0%) saturate(476%) hue-rotate(67deg) brightness(118%) contrast(119%);
 }
+.controls {
+  margin: 1vw;
+}

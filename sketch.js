@@ -3,6 +3,7 @@ var difficulty = 1;
 var boxes = [], enemies = [];
 var bgColor = 0, sb = 0;
 var maxSpeed = 0;
+var slider = document.getElementById("myRange");
 function preload() {
   soundFormats('mp3', 'ogg');
   song = loadSound('assets/screm.mp3');
@@ -28,6 +29,9 @@ function setup() {
   info.child(createElement('p', 'You can use the space bar to jump too'));
   info.child(createElement('p', 'Press P to pause the game'));
   info.child(createElement('p', 'Press R to restart the game'));
+  // var output = document.getElementById("demo");
+  // output.innerHTML = slider.value; // Display the default slider value
+  // info.child(slider);
 }
 // function play(){
 //   song.loop();
@@ -60,6 +64,7 @@ function draw() {
         dtimer = millis();
       }
     }
+    song.setVolume(slider.value/100);
     translate(-person.pos.x - person.vel.x + 50,0);
     person.update();
     person.edges();
